@@ -7,8 +7,8 @@ from stationaryGoalEnv import StationaryGoalEnv
 from randomGoalEnv import RandomGoalEnv
 
 # run 'tensorboard --logdir=logs' to see training logs. Replace 'logs' with whatever filepath the logs folder has
-models_dir = f"models/Rand_{int(time.localtime().tm_mon)}-{int(time.localtime().tm_mday)}-{int(time.localtime().tm_year)}_{int(time.localtime().tm_hour-6)}.{int(time.localtime().tm_min)}.{int(time.localtime().tm_sec)}"
-log_dir = f"logs/Rand_{int(time.localtime().tm_mon)}-{int(time.localtime().tm_mday)}-{int(time.localtime().tm_year)}_{int(time.localtime().tm_hour-6)}.{int(time.localtime().tm_min)}.{int(time.localtime().tm_sec)}"
+models_dir = f"models/PPO_{int(time.localtime().tm_mon)}-{int(time.localtime().tm_mday)}-{int(time.localtime().tm_year)}_{int(time.localtime().tm_hour-6)}.{int(time.localtime().tm_min)}.{int(time.localtime().tm_sec)}"
+log_dir = f"logs/PPO_{int(time.localtime().tm_mon)}-{int(time.localtime().tm_mday)}-{int(time.localtime().tm_year)}_{int(time.localtime().tm_hour-6)}.{int(time.localtime().tm_min)}.{int(time.localtime().tm_sec)}"
 
 if not os.path.exists(models_dir):
     os.makedirs(models_dir)
@@ -28,7 +28,7 @@ model = PPO("MlpPolicy", env, verbose=1, tensorboard_log=log_dir)
 TIMESTEPS = 10000
 
 for i in range(1,10):
-    model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=False, tb_log_name="Rand")
+    model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=False, tb_log_name="PPO")
     model.save(f"{models_dir}/{TIMESTEPS*i}")
 
 env.close()
