@@ -1,3 +1,5 @@
+# Trains models with RandomGoalEnv using PPO. Replace "model" variable with A2C to use A2C, and replace "env" variable with StationaryGoalEnv to use a stationary goal.
+
 import gymnasium as gym
 from stable_baselines3 import A2C
 from stable_baselines3 import PPO

@@ -1,8 +1,8 @@
-# import gymnasium as gym
+# Loads and runs existing models from the trainedExModels folder for testing, visualization, etc.
+
 from stable_baselines3 import PPO
 import os
 import pygame
-# import time
 from stationaryGoalEnv import StationaryGoalEnv
 from randomGoalEnv import RandomGoalEnv
 
@@ -10,7 +10,7 @@ print("Enter model path within the models folder: ")
 filepath = input()
 
 if not os.path.exists(f"trainedExModels/{filepath}"):
-    print("Must enter valid file path within models folder")
+    print("Must enter valid file path within trainedExModels folder")
     pass
 
 env = RandomGoalEnv(10,10)

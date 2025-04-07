@@ -1,9 +1,12 @@
+# AI training environment using a grid with a random goal
+
 import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 import pygame
 import time
 import random
+import cells
 from cells import Cell
 from cells import Player
 
@@ -19,30 +22,34 @@ class RandomGoalEnv(gym.Env):
 
     def __init__(self, width=5, height=5):
         super().__init__()
+        # Sets the grid size
         self.width = width
         self.height = height
+        
         # Define action and observation space
         # They must be gym.spaces objects
-        # Example when using discrete actions:
+        
+        # The model can make 4 actions, what they do is defined later
         self.action_space = spaces.Discrete(4)
-        # Example for using image as input (channel-first; channel-last also works):
+
+        # The observation space is a box that has 4 data channels (?)
         self.observation_space = spaces.Box(low=0, high=4,
                                             shape=(4,), dtype=np.int64)
 
+    # This will run every time step
     def step(self, action):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.done = True
                 break
 
-        # Finds current distance between the agent and the goal for later comparison
+        # Finds current distance between the agent and the goal for reward function
         dx = abs(self.player.x - self.goal_x)
         dy = abs(self.player.y - self.goal_y)
 
-        # self.cooldown = 0
-        # if time.time() >= self.cooldown:
-            # self.cooldown = time.time() + 0.5
         # pygame.time.delay(10)
+
+        # Sets what the model's actions do: 0:left, 1:right, 2:up, 3:down
         if action == 0 and self.player.x>0:
             self.done = not self.player.move(self.screen, self.grid[self.player.x-1][self.player.y])
         elif action == 1 and self.player.x<self.width-1:
@@ -51,8 +58,8 @@ class RandomGoalEnv(gym.Env):
             self.done = not self.player.move(self.screen, self.grid[self.player.x][self.player.y-1])
         elif action == 3 and self.player.y<self.height-1:
             self.done = not self.player.move(self.screen, self.grid[self.player.x][self.player.y+1])
-        # else:
-            # self.cooldown = 0
+            
+        # Updates screen
         pygame.display.update()
 
         if self.done:       # Agent reached the goal, give 100 points
@@ -62,6 +69,7 @@ class RandomGoalEnv(gym.Env):
         else:               # Agent moved away from the goal, take 20 points
             self.reward = -20
             
+        # Updates environment info
         self.observation = np.array([self.player.x, self.player.y, self.goal_x, self.goal_y])
 
         self.info = {}

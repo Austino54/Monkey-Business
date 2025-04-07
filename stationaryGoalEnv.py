@@ -1,3 +1,5 @@
+# AI training environment using a grid with a stationary goal
+
 import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
@@ -18,13 +20,17 @@ class StationaryGoalEnv(gym.Env):
 
     def __init__(self, width=5, height=5):
         super().__init__()
+        # Sets the grid size
         self.width = width
         self.height = height
+        
         # Define action and observation space
         # They must be gym.spaces objects
-        # Example when using discrete actions:
+        
+        # The model can make 4 actions, what they do is defined later
         self.action_space = spaces.Discrete(4)
-        # Example for using image as input (channel-first; channel-last also works):
+
+        # The observation space is a box that has 4 data channels (?)
         self.observation_space = spaces.Box(low=0, high=4,
                                             shape=(4,), dtype=np.int64)
 
@@ -34,10 +40,9 @@ class StationaryGoalEnv(gym.Env):
                 self.done = True
                 break
 
-        # self.cooldown = 0
-        # if time.time() >= self.cooldown:
-            # self.cooldown = time.time() + 0.5
-            # pygame.time.delay(10)
+        # pygame.time.delay(10)
+
+        # Sets what the model's actions do: 0:left, 1:right, 2:up, 3:down
         if action == 0 and self.player.x>0:
             self.done = not self.player.move(self.screen, self.grid[self.player.x-1][self.player.y])
         elif action == 1 and self.player.x<self.width-1:
@@ -46,15 +51,16 @@ class StationaryGoalEnv(gym.Env):
             self.done = not self.player.move(self.screen, self.grid[self.player.x][self.player.y-1])
         elif action == 3 and self.player.y<self.height-1:
             self.done = not self.player.move(self.screen, self.grid[self.player.x][self.player.y+1])
-        # else:
-            # self.cooldown = 0
+            
+        # Updates screen
         pygame.display.update()
 
         if self.done:
-            self.reward = 100
+            self.reward = 100   # Agent reached the goal, give 100 points
         else:
-            self.reward = -10
+            self.reward = -10   # Agent did not reach the goal, take 10 points
             
+        # Updates environment info
         self.observation = np.array([self.player.x, self.player.y, 0, self.height-1])
 
         self.info = {}

@@ -1,3 +1,5 @@
+# Playable version of the stationary goal environment
+
 import pygame
 import time
 
