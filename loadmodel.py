@@ -5,21 +5,27 @@ import os
 import pygame
 from stationaryGoalEnv import StationaryGoalEnv
 from randomGoalEnv import RandomGoalEnv
+import tkinter as tk
+from tkinter import filedialog
 
 print("Enter model path within the models folder: ")
-filepath = input()
 
-if not os.path.exists(f"trainedExModels/{filepath}"):
+root = tk.Tk()
+
+filepath = filedialog.askopenfilename()
+root.withdraw()
+
+if not os.path.exists(f"{filepath}"):
     print("Must enter valid file path within trainedExModels folder")
-    pass
+    quit()
 
 env = RandomGoalEnv(10,10)
 
 model = PPO("MlpPolicy", env, verbose=1)
 
 # model.load(f"models/{str(filepath)}")
-model.set_parameters(f"trainedExModels/{str(filepath)}")
-print(f"trainedExModels/{filepath}")
+model.set_parameters(f"{str(filepath)}")
+print(f"{filepath}")
 
 episode = 0
 while True:

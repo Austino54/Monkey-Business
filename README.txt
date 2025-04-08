@@ -7,6 +7,7 @@ Tensorboard - pip install tensorboard
 To use tensorboard:
 tensorboard --logdir=logs
 Where "logs" is the filepath to the logs folder
+IMPORTANT NOTE: Open settings in tensorboard and turn smoothing down. By default it is at .6 and may cause inaccurate graphs.
 
 Usage:
 Run modelTraining.py to train a model
