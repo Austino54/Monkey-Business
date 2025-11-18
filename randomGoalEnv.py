@@ -47,7 +47,7 @@ class RandomGoalEnv(gym.Env):
         dx = abs(self.player.x - self.goal_x)
         dy = abs(self.player.y - self.goal_y)
 
-        # pygame.time.delay(10)
+        # pygame.time.delay(15)
 
         # Sets what the model's actions do: 0:left, 1:right, 2:up, 3:down
         if action == 0 and self.player.x>0:

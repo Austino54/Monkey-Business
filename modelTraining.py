@@ -1,7 +1,8 @@
-# Trains models with RandomGoalEnv using PPO. Replace "model" variable with A2C to use A2C, and replace "env" variable with StationaryGoalEnv to use a stationary goal.
+# Trains models
 
 from stable_baselines3 import A2C
 from stable_baselines3 import PPO
+from stable_baselines3.common.vec_env import DummyVecEnv
 import os
 import time
 from stationaryGoalEnv import StationaryGoalEnv
@@ -48,7 +49,8 @@ if not os.path.exists(log_dir):
 if (envType.lower() == "stationary"):
     env = StationaryGoalEnv(int(size[0]), int(size[1]))
 elif (envType.lower() == "random"):
-    env = RandomGoalEnv(int(size[0]), int(size[1]))
+    # env = RandomGoalEnv(int(size[0]), int(size[1]))
+    env = DummyVecEnv([lambda: RandomGoalEnv(int(size[0]), int(size[1])), lambda: RandomGoalEnv(int(size[0]), int(size[1])), lambda: RandomGoalEnv(int(size[0]), int(size[1])), lambda: RandomGoalEnv(int(size[0]), int(size[1]))])
 env.reset()
 
 if (algo.upper() == "PPO"): 
