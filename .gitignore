@@ -3,3 +3,4 @@ logs/
 __pycache__/
 Server/__pycache__
 Client/__pycache__
+venv/
