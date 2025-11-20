@@ -33,7 +33,7 @@ class RandomGoalEnv(gym.Env):
         self.action_space = spaces.Discrete(4)
 
         # The observation space is a box that has 4 data channels (?)
-        self.observation_space = spaces.Box(low=0, high=4,
+        self.observation_space = spaces.Box(low=0, high=np.array([width-1,height-1,width-1,height-1]),
                                             shape=(4,), dtype=np.int64)
 
     # This will run every time step
@@ -47,7 +47,7 @@ class RandomGoalEnv(gym.Env):
         dx = abs(self.player.x - self.goal_x)
         dy = abs(self.player.y - self.goal_y)
 
-        # pygame.time.delay(15)
+        # pygame.time.delay(1000)
 
         # Sets what the model's actions do: 0:left, 1:right, 2:up, 3:down
         if action == 0 and self.player.x>0:
@@ -71,6 +71,8 @@ class RandomGoalEnv(gym.Env):
             
         # Updates environment info
         self.observation = np.array([self.player.x, self.player.y, self.goal_x, self.goal_y])
+        # print(self.observation)
+        # print('')
 
         self.info = {}
         truncated = False

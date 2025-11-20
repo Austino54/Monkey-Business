@@ -31,7 +31,7 @@ class StationaryGoalEnv(gym.Env):
         self.action_space = spaces.Discrete(4)
 
         # The observation space is a box that has 4 data channels (?)
-        self.observation_space = spaces.Box(low=0, high=4,
+        self.observation_space = spaces.Box(low=0, high=np.array([width-1,height-1,width-1,height-1]),
                                             shape=(4,), dtype=np.int64)
 
     def step(self, action):
