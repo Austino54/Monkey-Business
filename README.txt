@@ -14,4 +14,10 @@ Run modelTraining.py to train a model
 Run loadmodel.py to load and run a model
 Run playableMode.py to explore the stationary goal environment
 
+For custom environments:
+Use game.py as a template, make anything using pygame
+
+For server use, first run Server/envServer.py, then run Client/envClient.py.
+The client will run the game described in Client/playSpace.py and send data to the server, which handles the gym environment and model training
+
 Additional functionality coming soon

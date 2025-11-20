@@ -7,6 +7,8 @@ import os
 import time
 from stationaryGoalEnv import StationaryGoalEnv
 from randomGoalEnv import RandomGoalEnv
+from customEnv import CustomEnv
+from game import Game
 
 print("Enter algorithm to train model (PPO, A2C): ")
 while True:
@@ -16,13 +18,13 @@ while True:
     else:
         print("Invalid response. Please enter either 'PPO' or 'A2C': ")
 
-print("Enter environment goal type (stationary, random): ")
+print("Enter environment goal type (stationary, random, custom): ")
 while True:
     envType = input()
-    if (envType.lower() == "stationary" or envType.lower() == "random"):
+    if (envType.lower() == "stationary" or envType.lower() == "random" or envType.lower() == "custom"):
         break
     else:
-        print("Invalid response. Please enter either 'stationary' or 'random': ")
+        print("Invalid response. Please enter either 'stationary' 'custom' or 'random': ")
 
 size = ['10','10']
 print("Enter size in fromat 'x y' (leave blank for default): ")
@@ -49,8 +51,10 @@ if not os.path.exists(log_dir):
 if (envType.lower() == "stationary"):
     env = StationaryGoalEnv(int(size[0]), int(size[1]))
 elif (envType.lower() == "random"):
-    # env = RandomGoalEnv(int(size[0]), int(size[1]))
-    env = DummyVecEnv([lambda: RandomGoalEnv(int(size[0]), int(size[1])), lambda: RandomGoalEnv(int(size[0]), int(size[1])), lambda: RandomGoalEnv(int(size[0]), int(size[1])), lambda: RandomGoalEnv(int(size[0]), int(size[1]))])
+    env = RandomGoalEnv(int(size[0]), int(size[1]))
+    # env = DummyVecEnv([lambda: RandomGoalEnv(int(size[0]), int(size[1])), lambda: RandomGoalEnv(int(size[0]), int(size[1])), lambda: RandomGoalEnv(int(size[0]), int(size[1])), lambda: RandomGoalEnv(int(size[0]), int(size[1]))])
+elif (envType.lower() == "custom"):
+    env = CustomEnv(Game())
 env.reset()
 
 if (algo.upper() == "PPO"): 
@@ -66,6 +70,6 @@ TIMESTEPS = 10000
 
 for i in range(1,10):
     model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=False, tb_log_name=algo.upper())
-    model.save(f"{models_dir}/{TIMESTEPS*i}")
+    model.save(f"{models_dir}/{TIMESTEPS*(i+1)}")
 
 env.close()

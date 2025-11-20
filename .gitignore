@@ -1,6 +1,8 @@
 models/
 logs/
 __pycache__/
-Server/__pycache__
-Client/__pycache__
+Server/__pycache__/
+Server/logs/
+Server/models/
+Client/__pycache__/
 venv/

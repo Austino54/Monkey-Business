@@ -27,9 +27,9 @@ class Player(Cell):
         self.y = target.y
         # print((player.x,player.y))
         if target.color == RED:
-            player.colorChange(screen, GREEN)
+            self.colorChange(screen, GREEN)
             return False
-        player.colorChange(screen, BLUE)
+        self.colorChange(screen, BLUE)
         return True
 
 
