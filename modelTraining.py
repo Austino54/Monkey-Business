@@ -26,17 +26,19 @@ while True:
     else:
         print("Invalid response. Please enter either 'stationary' 'custom' or 'random': ")
 
-size = ['10','10']
-print("Enter size in fromat 'x y' (leave blank for default): ")
-while True:
-    sizeStr = input()
-    if (sizeStr.count(' ') == 1 and sizeStr[0].isnumeric() and sizeStr[sizeStr.__len__()-1].isnumeric()):
-        size = sizeStr.split(' ')
-        break
-    elif (not sizeStr):
-        break
-    else:
-        print("Invalid response.")
+
+size = ['5','5']
+if envType.lower() != "custom":
+    print("Enter size in fromat 'x y' (leave blank for default): ")
+    while True:
+        sizeStr = input()
+        if (sizeStr.count(' ') == 1 and sizeStr[0].isnumeric() and sizeStr[sizeStr.__len__()-1].isnumeric()):
+            size = sizeStr.split(' ')
+            break
+        elif (not sizeStr):
+            break
+        else:
+            print("Invalid response.")
 
 # run 'tensorboard --logdir=logs' to see training logs. Replace 'logs' with whatever filepath the logs folder has
 models_dir = f"models/{algo.upper()}_{int(time.localtime().tm_mon)}-{int(time.localtime().tm_mday)}-{int(time.localtime().tm_year)}_{int(time.localtime().tm_hour-6)}.{int(time.localtime().tm_min)}.{int(time.localtime().tm_sec)}"

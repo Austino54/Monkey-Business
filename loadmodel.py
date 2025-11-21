@@ -5,8 +5,31 @@ import os
 import pygame
 from stationaryGoalEnv import StationaryGoalEnv
 from randomGoalEnv import RandomGoalEnv
+from customEnv import CustomEnv
+from game import Game
 import tkinter as tk
 from tkinter import filedialog
+
+print("Enter environment goal type (stationary, random, custom): ")
+while True:
+    envType = input()
+    if (envType.lower() == "stationary" or envType.lower() == "random" or envType.lower() == "custom"):
+        break
+    else:
+        print("Invalid response. Please enter either 'stationary' 'custom' or 'random': ")
+
+size = ['5','5']
+if envType.lower() != "custom":
+    print("Enter size in fromat 'x y' (leave blank for default): ")
+    while True:
+        sizeStr = input()
+        if (sizeStr.count(' ') == 1 and sizeStr[0].isnumeric() and sizeStr[sizeStr.__len__()-1].isnumeric()):
+            size = sizeStr.split(' ')
+            break
+        elif (not sizeStr):
+            break
+        else:
+            print("Invalid response.")
 
 print("Enter model path within the models folder: ")
 
@@ -19,7 +42,12 @@ if not os.path.exists(f"{filepath}"):
     print("Must enter valid file path within trainedExModels folder")
     quit()
 
-env = RandomGoalEnv(10,10)
+if (envType.lower() == "stationary"):
+    env = StationaryGoalEnv(int(size[0]), int(size[1]))
+elif (envType.lower() == "random"):
+    env = RandomGoalEnv(int(size[0]), int(size[1]))
+elif (envType.lower() == "custom"):
+    env = CustomEnv(Game())
 
 model = PPO("MlpPolicy", env, verbose=1)
 
@@ -34,11 +62,10 @@ while True:
     done = False
     score = 0
     while not done:
-        # env.render()
         action, _ = model.predict(obs)
         obs, reward, done, truncated, info = env.step(action)
         score += reward
-        pygame.time.delay(100)
+        # pygame.time.delay(50) # Uncomment this if you want to slow down simulation to see it better
     print('episode:{} score:{}'.format(episode, score))
     if (episode >= 500):
         episode = 0
