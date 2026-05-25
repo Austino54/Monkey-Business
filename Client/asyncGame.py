@@ -68,7 +68,7 @@ class Game(threading.Thread):
         print("Started")
         # endTime = time.time() + 10
         while True:
-            print("Here!")
+            # print("Here!")
             for event in pygame.event.get():
                 pass
 
@@ -82,7 +82,7 @@ class Game(threading.Thread):
             self.drawScreen()
 
             # pygame.display.update()
-            print("There!")
+            # print("There!")
             # pygame.time.delay(50)
 
 game = Game()
