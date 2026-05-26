@@ -8,38 +8,11 @@ import time
 from stationaryGoalEnv import StationaryGoalEnv
 from randomGoalEnv import RandomGoalEnv
 from customEnv import CustomEnv
-from GUIgame import Game
-# from snakeTest import Game
-
-# print("Enter algorithm to train model (PPO, A2C): ")
-# while True:
-#     algo = input()
-#     if (algo.upper() == "PPO" or algo.upper() == "A2C"):
-#         break
-#     else:
-#         print("Invalid response. Please enter either 'PPO' or 'A2C': ")
-
-# print("Enter environment goal type (stationary, random, custom): ")
-# while True:
-#     envType = input()
-#     if (envType.lower() == "stationary" or envType.lower() == "random" or envType.lower() == "custom"):
-#         break
-#     else:
-#         print("Invalid response. Please enter either 'stationary' 'custom' or 'random': ")
+# from GUIgame import Game
+from snakeTest import Game
 
 
 size = ['5','5']
-# if envType.lower() != "custom":
-#     print("Enter size in fromat 'x y' (leave blank for default): ")
-#     while True:
-#         sizeStr = input()
-#         if (sizeStr.count(' ') == 1 and sizeStr[0].isnumeric() and sizeStr[sizeStr.__len__()-1].isnumeric()):
-#             size = sizeStr.split(' ')
-#             break
-#         elif (not sizeStr):
-#             break
-#         else:
-#             print("Invalid response.")
 
 # run 'tensorboard --logdir=logs' to see training logs. Replace 'logs' with whatever filepath the logs folder has
 models_dir = f"models/{"PPO".upper()}_{int(time.localtime().tm_mon)}-{int(time.localtime().tm_mday)}-{int(time.localtime().tm_year)}_{int(time.localtime().tm_hour-6)}.{int(time.localtime().tm_min)}.{int(time.localtime().tm_sec)}"

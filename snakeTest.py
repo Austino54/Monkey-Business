@@ -1,3 +1,8 @@
+'''
+Original code taken from https://github.com/Leonardpepa/pygame-simple-examples/blob/main/snake_game/main.py
+Adapted into an env for RL use
+'''
+
 import os
 import json
 import random
@@ -48,7 +53,7 @@ class Game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-                pygame.quit()
+                pygame.quit(); sys.exit(0)
         if action == -1:
             self.running = False
             return self.running

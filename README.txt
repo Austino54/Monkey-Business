@@ -21,4 +21,12 @@ Use game.py as a template, make anything using pygame
 For server use, first run Server/envServer.py, then run Client/envClient.py.
 The client will run the game described in Client/playSpace.py and send data to the server, which handles the gym environment and model training
 
+FOR GUI USAGE:
+Run 'py trainGUI.py' to open the GUI
+If you want to switch games, you have to change the config path in trainGUI.py on line 33 and the imported game in
+    GUImodelTraining.py on line 12. This will be changed in the future.
+
+NOTE:
+The reward function is not yet fully implemented for the snake game
+
 Additional functionality coming soon

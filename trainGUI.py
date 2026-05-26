@@ -3,34 +3,7 @@ pygame_gui.py
 ─────────────
 PyGame GUI for configuring a goal-seeking RL reward function.
 
-reward(data) signature
-──────────────────────
-    data : np.ndarray, shape (5,)
-           [goal_x, goal_y, player_x, player_y, prev_dist]
-    return : float  –  rewPoints total
-
-How it works
-────────────
-rewPoints starts at 0 each call. The three methods below are evaluated in
-order. If the condition is met, the menu-configured point value is added.
-
-Methods
-───────
-  gotCloser    – player is closer to goal than previous step     (+)
-  gotFarther   – player is farther from goal than previous step  (-)
-  reachedGoal  – player is within GOAL_TOLERANCE of goal         (+)
-
-Point values are set via dropdowns in the GUI (-100 to +100).
-
-Usage from another module
-─────────────────────────
-    import threading, numpy as np
-    from pygame_gui import reward, start_gui
-
-    threading.Thread(target=start_gui, daemon=True).start()
-
-    data = np.array([goal_x, goal_y, player_x, player_y, prev_dist])
-    r = reward(data)
+Point values are set via dropdowns in the GUI
 
 Requirements
 ────────────
@@ -47,19 +20,13 @@ from pathlib import Path
 import numpy as np
 import pygame
 
-# ══════════════════════════════════════════════════════════════════════════════
-#  Module-level reward config  (written live by the GUI)
-# ══════════════════════════════════════════════════════════════════════════════
-GOT_CLOSER_PTS   : int   =  10
-GOT_FARTHER_PTS  : int   = -10
-REACHED_GOAL_PTS : int   = 100
-GOAL_TOLERANCE   : float =  1.0   # Euclidean distance that counts as "reached"
-DIST_BONUS_SCALE : int   =  25
-
 # CONFIG_PATH = Path(__file__).with_name("reward_config.json")
-CONFIG_PATH = Path(__file__).with_name("reward_config.json")
+CONFIG_PATH = Path(__file__).with_name("snake_reward_config.json")
+
 REWARD_ITEMS_KEY = "reward_items"
 
+
+# Default config in case of bad cfg file. Can be ignored for the most part
 _PTS_LABELS = ["-100", "-75", "-50", "-25", "-10", "-5", "-1",
                "0",
                "+1",  "+5",  "+10", "+25", "+50", "+75", "+100"]
@@ -129,6 +96,8 @@ def load_reward_config(path: Path | str = CONFIG_PATH) -> dict:
 
 def save_reward_config(config: dict, path: Path | str = CONFIG_PATH) -> None:
     try:
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             json.dump(config, f, indent=2)
     except OSError:
@@ -142,19 +111,20 @@ def _find_reward_item(config: dict, attr: str) -> dict | None:
     return None
 
 
-def _update_reward_config(attr: str, value) -> None:
-    config = load_reward_config()
+def set_config_path(path: Path | str) -> None:
+    global CONFIG_PATH
+    CONFIG_PATH = Path(path)
+
+
+def _update_reward_config(attr: str, value, path: Path | str = CONFIG_PATH) -> None:
+    config = load_reward_config(path)
     item = _find_reward_item(config, attr)
     if item is not None:
         item["value"] = value
-        save_reward_config(config)
-# ══════════════════════════════════════════════════════════════════════════════
-#  trainGUI.py now only manages config metadata; actual reward logic lives in GUIgame.py.
-# ══════════════════════════════════════════════════════════════════════════════
+        save_reward_config(config, path)
+#  trainGUI.py only manages config metadata; actual reward logic lives in GUIgame.py
 
-# ══════════════════════════════════════════════════════════════════════════════
 #  Colours
-# ══════════════════════════════════════════════════════════════════════════════
 BG         = ( 14,  17,  24)
 PANEL      = ( 22,  28,  38)
 PANEL2     = ( 28,  35,  50)
@@ -300,9 +270,9 @@ class DropDown:
         clip = surf.get_clip()
         surf.set_clip(self._list)
         start = self.scroll
-        end = min(start + self.visible, len(self.labels))
+        end = min(start + self.visible, len(self.labels), len(self.values))
         for i in range(start, end):
-            lb = self.labels[i]
+            lb = self.labels[i] if i < len(self.labels) else str(self.values[i])
             vl = self.values[i]
             ir = pygame.Rect(self._list.x, self._list.y + (i - start) * self.ROW_H,
                              self._list.w, self.ROW_H)
@@ -327,11 +297,14 @@ class App:
 
     TERMINAL_COMMAND = "py -u GUImodelTraining.py"
 
-    def __init__(self):
+    def __init__(self, config_path: Path | str | None = None):
         pygame.init()
         self.screen = pygame.display.set_mode((self.W, self.H))
         pygame.display.set_caption("RL Reward Config")
         self.clock = pygame.time.Clock()
+        self.config_path = Path(config_path) if config_path is not None else CONFIG_PATH
+        if self.config_path != CONFIG_PATH:
+            set_config_path(self.config_path)
 
         self.fT  = pygame.font.SysFont("Consolas",    18, bold=True)  # title
         self.fH  = pygame.font.SysFont("Consolas",    12, bold=True)  # headers
@@ -347,8 +320,8 @@ class App:
         self.cmd_output_lock = threading.Lock()
 
         self._build()
-        if not CONFIG_PATH.exists():
-            save_reward_config(load_reward_config())
+        if not self.config_path.exists():
+            save_reward_config(load_reward_config(self.config_path), self.config_path)
 
     # ── Layout ────────────────────────────────────────────────────────────────
     def _build(self):
@@ -369,11 +342,15 @@ class App:
         CARD_GAP = 12
         self.cards = []
         y = TOP
-        config = load_reward_config()
+        config = load_reward_config(self.config_path)
         for item in config.get(REWARD_ITEMS_KEY, []):
-            opt_lbl = item.get("labels", _PTS_LABELS)
-            opt_val = item.get("options", _PTS_VALUES)
-            cfg_val = item.get("value", opt_val[0] if opt_val else 0)
+            opt_lbl = item.get("labels", None)
+            opt_val = item.get("options", None)
+            if not isinstance(opt_val, list) or len(opt_val) == 0:
+                opt_val = [item.get("value", 0)]
+            if not isinstance(opt_lbl, list) or len(opt_lbl) != len(opt_val):
+                opt_lbl = [str(v) for v in opt_val]
+            cfg_val = item.get("value", opt_val[0])
             try:
                 idx = opt_val.index(cfg_val)
             except ValueError:
@@ -415,7 +392,7 @@ class App:
                 self._run_cmd()
         for card in self.cards:
             if card["dd"].handle(ev):
-                _update_reward_config(card["attr"], card["dd"].value)
+                _update_reward_config(card["attr"], card["dd"].value, self.config_path)
 
     # ── Terminal ──────────────────────────────────────────────────────────────
     def _run_cmd(self):
@@ -463,7 +440,9 @@ class App:
     def _d_title(self):
         t = self.fT.render("⬡  RL Reward Config  ·  Goal-Seeking Agent", True, TEXT_PRI)
         self.screen.blit(t, (18, 12))
-        pygame.draw.line(self.screen, BORDER, (18, 40), (self.W - 18, 40), 1)
+        cfg = self.fS.render(f"Config: {self.config_path.name}", True, TEXT_SEC)
+        self.screen.blit(cfg, (18, 38))
+        pygame.draw.line(self.screen, BORDER, (18, 56), (self.W - 18, 56), 1)
 
     def _d_cmd_panel(self):
         _rr(self.screen, PANEL, self.cmd_panel)
@@ -602,10 +581,11 @@ class App:
 # ══════════════════════════════════════════════════════════════════════════════
 #  Public entry points
 # ══════════════════════════════════════════════════════════════════════════════
-def start_gui():
+def start_gui(config_path: Path | str | None = None):
     """Run the GUI – call in a daemon thread from another module."""
-    App().run()
+    App(config_path).run()
 
 
 if __name__ == "__main__":
-    App().run()
+    cfg_path = sys.argv[1] if len(sys.argv) > 1 else None
+    App(cfg_path).run()

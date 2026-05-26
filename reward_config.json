@@ -38,7 +38,7 @@
         75,
         100
       ],
-      "value": -25
+      "value": 10
     },
     {
       "id": "GOT_FARTHER_PTS",
@@ -78,7 +78,7 @@
         75,
         100
       ],
-      "value": 10
+      "value": -25
     },
     {
       "id": "REACHED_GOAL_PTS",
@@ -118,7 +118,7 @@
         75,
         100
       ],
-      "value": -100
+      "value": 100
     },
     {
       "id": "DIST_BONUS_SCALE",
@@ -158,7 +158,7 @@
         75,
         100
       ],
-      "value": -25
+      "value": 25
     }
   ]
 }
