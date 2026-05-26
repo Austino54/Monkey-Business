@@ -27,6 +27,6 @@ If you want to switch games, you have to change the config path in trainGUI.py o
     GUImodelTraining.py on line 12. This will be changed in the future.
 
 NOTE:
-The reward function is not yet fully implemented for the snake game
+The reward function is not yet fully implemented for the snake game. Works but is janky
 
 Additional functionality coming soon
