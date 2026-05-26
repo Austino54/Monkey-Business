@@ -3,6 +3,9 @@ from gymnasium import spaces
 import numpy as np
 import asyncio
 import threading
+import subprocess
+import math
+import sys
 
 # print(time.localtime().tm_hour-6)
 # print(time.time())
@@ -24,12 +27,38 @@ import threading
 
 # class RunningTemp(threading.Thread):
 
-arr = np.array([[2,3],[4,5]])
-print(arr,'\n')
-arr2 = np.array(arr)
-print(arr2,'\n')
-arr2[0,1] = 0
-print(arr2,'\n')
-print(arr,'\n')
-arr = np.array(arr2)
+# arr = np.array([[2,3],[4,5]])
+# print(arr,'\n')
+# arr2 = np.array(arr)
+# print(arr2,'\n')
+# arr2[0,1] = 0
+# print(arr2,'\n')
+# print(arr,'\n')
+# arr = np.array(arr2)
+# print(arr)
+
+obs = np.array([1, 2, 3, 4])
+
+arr = np.array(obs,[5])
+
 print(arr)
+
+# DIST_BONUS_SCALE  : int   =  50   # scale factor for distanceBonus  (pts * scale/(d+1))
+
+#     scale = getattr(_m, "DIST_BONUS_SCALE", 50)
+#     rewPoints += scale / (curr_dist + 1.0)
+
+#     "DIST_BONUS_SCALE": 3,   # 50
+
+#     (
+#         "DIST_BONUS_SCALE",
+#         "Dist Bonus Scale",
+#         "Scale for smooth distance reward",
+#         ["0", "10", "25", "50", "100", "200"],
+#         [ 0,   10,   25,   50,   100,   200],
+#     ),
+
+#             if card["attr"] == "DIST_BONUS_SCALE":
+#                 parts.append(f"  {sign}{v}/(d+1)  ← {card['label']}")
+#             else:
+#                 parts.append(f"  {sign}{v}          ← {card['label']}")

@@ -8,7 +8,7 @@ import time
 from stationaryGoalEnv import StationaryGoalEnv
 from randomGoalEnv import RandomGoalEnv
 from customEnv import CustomEnv
-from game import Game
+from snakeTest import Game
 
 print("Enter algorithm to train model (PPO, A2C): ")
 while True:

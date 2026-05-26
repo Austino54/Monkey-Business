@@ -1,0 +1,25 @@
+{
+  "reward_items": [
+    {
+      "id": "DISTANCE_PTS",
+      "label": "Distance",
+      "description": "Points awarded when getting closer to the apple (negative if moving away).",
+      "options": [-20, -10, 0, 5, 10, 15, 20],
+      "value": 15
+    },
+    {
+      "id": "APPLE_PTS",
+      "label": "Apple Eaten",
+      "description": "Points awarded when the snake eats an apple.",
+      "options": [10, 20, 30, 40, 50, 100],
+      "value": 50
+    },
+    {
+      "id": "FAILURE_PTS",
+      "label": "Failure",
+      "description": "Points awarded (usually negative) when the snake fails (collision).",
+      "options": [-500, -200, -100, -50, -10],
+      "value": -100
+    }
+  ]
+}
